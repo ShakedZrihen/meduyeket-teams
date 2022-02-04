@@ -21,8 +21,8 @@ function get_date() {
 }
 
 /// my additions
-let round = 0;
-let turn = 14;
+let round = Math.floor(Math.random() * 400);
+let turn = 0;
 let team1Score = 0;
 let team2Score = 0;
 
