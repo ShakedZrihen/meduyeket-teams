@@ -391,7 +391,6 @@ h2.big {
 #score {
   display: flex;
   justify-content: space-between;
-  width: 30rem;
 }
 
 #team1,
@@ -400,6 +399,10 @@ h2.big {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#team2 {
+  margin-right: 3rem;
 }
 
 #team1 p,
