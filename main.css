@@ -395,6 +395,7 @@ h2.big {
 
 #team1,
 #team2 {
+  white-space: nowrap;
   font-size: 20px;
   display: flex;
   flex-direction: column;
