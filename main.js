@@ -586,8 +586,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   set_modal_state();
   window.addEventListener("popstate", set_modal_state);
-  adapt_to_window_size();
-  window.addEventListener("resize", adapt_to_window_size);
+  // adapt_to_window_size();
+  // window.addEventListener("resize", adapt_to_window_size);
 
   /// my additions
   updateTeamsScore();
