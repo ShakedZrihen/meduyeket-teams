@@ -590,6 +590,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // window.addEventListener("resize", adapt_to_window_size);
 
   /// my additions
-  updateTeamsScore();
   setTurn();
+  updateTeamsScore();
 });
