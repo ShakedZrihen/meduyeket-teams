@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>מדויקת: משחק מילים</title>
+    <link rel="icon" href="favicon.png">
+    <meta property="og:image" content="screenshot.png">
+    <meta property="og:description"
+        content="נסו לנחש את המילה המדויקת, יש 6 נסיונות. כל ניחוש חייב להיות מילה בת 5 אותיות. לאחר כל ניחוש, צבע האותיות ישתנה כדי להראות כמה הניחוש היה קרוב למילה">
+    <meta property="description"
+        content="נסו לנחש את המילה המדויקת, יש 6 נסיונות. כל ניחוש חייב להיות מילה בת 5 אותיות. לאחר כל ניחוש, צבע האותיות ישתנה כדי להראות כמה הניחוש היה קרוב למילה">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="מדויקת: משחק מילים">
+    <meta name="twitter:image" content="https://amirlb.github.io/meduyeket/screenshot-twitter.png">
+    <link rel="stylesheet" href="main.css">
+    <script defer src="words.js" charset="UTF-8"></script>
+    <script defer src="main.js" charset="UTF-8"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9BNSJSTY61"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-9BNSJSTY61', { cookieFlags: 'SameSite=None; Secure' });
+    </script>
+    <!-- Matomo -->
+    <script>
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = "tracking/";
+            _paq.push(['setTrackerUrl', u + 'matomo.php']);
+            _paq.push(['setSiteId', '1']);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <!-- End Matomo Code -->
+</head>
+<!--
+    A word guessing game inspired by Wordle
+    Copyright (C) 2022  Amir Livne Bar-on
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<body>
+    <div id="header">
+        <svg id="help-button" viewbox="0 0 105 105">
+            <path d="M 34 35 A 16 12.5 0 1 1 59.6 45 A 24 18.75 0 0 0 50 60" stroke-width="10" stroke-linecap="round"
+                fill="none" stroke="gray" />
+            <circle cx="50" cy="76" r="8" fill="gray" />
+            <circle cx="50" cy="50" r="45" stroke-width="10" fill="none" stroke="gray" />
+        </svg>
+        <span id="app-name"> מאוד מדויקת</span>
+        <svg id="settings-button" viewBox="0 0 100 100">
+            <path d="M98,52A48,48,0,0,0,96,35Q71,36,82,14A48,48,0,0,0,67,5Q52,25,42,3A48,48,0,0,0,26,9
+                    Q32,33,8,27A48,48,0,0,0,2,43Q25,53,6,69A48,48,0,0,0,15,83Q37,71,37,96A48,48,0,0,0,54,98
+                    Q59,73,78,89A48,48,0,0,0,90,77Q74,58,98,52M50,65A15,15,0,0,0,50,35A15,15,0,0,0,50,65" fill="#aaa"
+                fill-rule="evenodd" />
+        </svg>
+    </div>
+    <div id="board">
+        <div id="team1">
+            <p>Team 1</p>
+            <p id="team1score"></p>
+        </div>
+        <div id="guesses">
+            <div class="row" id="guess-1">
+                <span class="letter" id="letter-1-1"></span>
+                <span class="letter" id="letter-1-2"></span>
+                <span class="letter" id="letter-1-3"></span>
+                <span class="letter" id="letter-1-4"></span>
+                <span class="letter" id="letter-1-5"></span>
+            </div>
+            <div class="row" id="guess-2">
+                <span class="letter" id="letter-2-1"></span>
+                <span class="letter" id="letter-2-2"></span>
+                <span class="letter" id="letter-2-3"></span>
+                <span class="letter" id="letter-2-4"></span>
+                <span class="letter" id="letter-2-5"></span>
+            </div>
+            <div class="row" id="guess-3">
+                <span class="letter" id="letter-3-1"></span>
+                <span class="letter" id="letter-3-2"></span>
+                <span class="letter" id="letter-3-3"></span>
+                <span class="letter" id="letter-3-4"></span>
+                <span class="letter" id="letter-3-5"></span>
+            </div>
+            <div class="row" id="guess-4">
+                <span class="letter" id="letter-4-1"></span>
+                <span class="letter" id="letter-4-2"></span>
+                <span class="letter" id="letter-4-3"></span>
+                <span class="letter" id="letter-4-4"></span>
+                <span class="letter" id="letter-4-5"></span>
+            </div>
+            <div class="row" id="guess-5">
+                <span class="letter" id="letter-5-1"></span>
+                <span class="letter" id="letter-5-2"></span>
+                <span class="letter" id="letter-5-3"></span>
+                <span class="letter" id="letter-5-4"></span>
+                <span class="letter" id="letter-5-5"></span>
+            </div>
+            <div class="row" id="guess-6">
+                <span class="letter" id="letter-6-1"></span>
+                <span class="letter" id="letter-6-2"></span>
+                <span class="letter" id="letter-6-3"></span>
+                <span class="letter" id="letter-6-4"></span>
+                <span class="letter" id="letter-6-5"></span>
+            </div>
+        </div>
+        <div id="team2">
+            <p>Team 2</p>
+            <p id="team2score"></p>
+        </div>
+    </div>
+
+    <div id="keyboard">
+        <div class="keyboard-row">
+            <span class="key wide" value="Backspace"><svg viewBox="0 0 60 50">
+                    <path d="M50,10L20,10L10,25L20,40L50,40L50,10M27,20L37,30M37,20L27,30" fill="none" stroke-width="5"
+                        stroke="black" stroke-linecap="square" />
+                </svg></span><span class="key">פ</span><span class="key">ו</span><span class="key">ט</span><span
+                class="key">א</span><span class="key">ר</span><span class="key">ק</span>
+        </div>
+        <div class="keyboard-row">
+            <span class="key">ל</span><span class="key">ח</span><span class="key">י</span><span
+                class="key">ע</span><span class="key">כ</span><span class="key">ג</span><span class="key">ד</span><span
+                class="key">ש</span>
+        </div>
+        <div class="keyboard-row">
+            <span class="key wide" value="Enter">
+                <span>אישור</span>
+                <svg viewBox="0 0 65 50">
+                    <path d="M55,15L55,30L10,30L20,20M10,30L20,40" fill="none" stroke-width="5" stroke="black"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg></span><span class="key">ת</span><span class="key">צ</span><span class="key">מ</span><span
+                class="key">נ</span><span class="key">ה</span><span class="key">ב</span><span class="key">ס</span><span
+                class="key">ז</span>
+        </div>
+    </div>
+    <div id="modal" class="hidden">
+        <div id="help-screen" class="hidden">
+            <div class="close-button">⨉</div>
+            <h1>איך לשחק?</h1>
+            <p>נסו לנחש את המילה ה<b>מדויקת</b>, יש 6 נסיונות.</p>
+            <p>
+                כל ניחוש חייב להיות מילה בת 5 אותיות.
+                לחצו על כפתור
+                <span class="no-break">”<svg viewBox="0 0 65 50">
+                        <path d="M55,15L55,30L10,30L20,20M10,30L20,40" fill="none" stroke-width="5" stroke="black"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>“</span>
+                כדי לבדוק את הניחוש.
+            </p>
+            <p>לאחר כל ניחוש, צבע האותיות ישתנה כדי להראות כמה הניחוש היה קרוב למילה.</p>
+            <h2>דוגמאות</h2>
+            <p>
+                <span class="letter example typed">ר</span>
+                <span class="letter example" match="exact">צ</span>
+                <span class="letter example typed">ו</span>
+                <span class="letter example typed">נ</span>
+                <span class="letter example typed">י</span>
+            </p>
+            <p>
+                האות
+                <b>צ</b>
+                נמצאת במילה והיא במקום הנכון.
+            </p>
+            <p>
+                <span class="letter example typed">ק</span>
+                <span class="letter example typed">ב</span>
+                <span class="letter example typed">י</span>
+                <span class="letter example typed">י</span>
+                <span class="letter example" match="other">ם</span>
+            </p>
+            <p>
+                האות
+                <b>מ</b>
+                נמצאת במילה אבל היא במקום הלא נכון, כלומר לא אות סופית.
+            </p>
+            <p>
+                <span class="letter example typed">א</span>
+                <span class="letter example typed">כ</span>
+                <span class="letter example typed">ל</span>
+                <span class="letter example" match="wrong">נ</span>
+                <span class="letter example typed">ו</span>
+            </p>
+            <p>
+                האות
+                <b>נ</b>
+                לא נמצאת במילה בכלל.
+            </p>
+            <h2>בכל יום תופיע מילה חדשה לנחש.</h2>
+            <div id="copyright-notice">
+                <p>כל הזכויות שמורות לעמיר ליבנה בר-און © 2022.</p>
+                <p>
+                    המשחק מבוסס על
+                    <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a>
+                    וקוד המקור שלו
+                    <a href="https://github.com/amirlb/meduyeket" target="_blank">זמין לצפייה</a>.
+                </p>
+            </div>
+        </div>
+        <div id="settings-screen" class="hidden">
+            <div class="close-button">⨉</div>
+            <h1>הגדרות</h1>
+            <div class="setting-selection">
+                <span>דרגת קושי:</span>
+                <label>
+                    <input type="radio" name="difficulty" value="normal" />
+                    <div>
+                        <span class="selection-title">רגילה</span>
+                        אפשר לנחש<br />
+                        כל מילה
+                    </div>
+                </label>
+                <label>
+                    <input type="radio" name="difficulty" value="hard" />
+                    <div>
+                        <span class="selection-title">קשה</span>
+                        חייבים לנצל<br />
+                        את כל הרמזים
+                    </div>
+                </label>
+            </div>
+            <div class="setting-selection">
+                <span>סכמת צבעים:</span>
+                <label>
+                    <input type="radio" name="color-scheme" value="pastel" />
+                    <div>
+                        <span class="selection-title">צבעי פסטל</span>
+                        <div class="settings-example-letter pastel-exact">צ</div>
+                        <div class="settings-example-letter pastel-other">ב</div>
+                        <div class="settings-example-letter pastel-wrong">ע</div>
+                    </div>
+                </label>
+                <label>
+                    <input type="radio" name="color-scheme" value="high-contrast" />
+                    <div>
+                        <span class="selection-title">צבעים עזים</span>
+                        <div class="settings-example-letter contrast-exact">צ</div>
+                        <div class="settings-example-letter contrast-other">ב</div>
+                        <div class="settings-example-letter contrast-wrong">ע</div>
+                    </div>
+                </label>
+            </div>
+            <h2 class="big">התקנה</h2>
+            <p>
+                כדי להתקין את
+                <b>מדויקת</b>
+                כאפליקציה בטלפון יש ללחוץ על תפריט הדפדפן
+                <span class="verbatim">&nbsp;⋮&nbsp;</span>
+                בפינה ולבחור באפשרות ”הוספה למסך הבית“.
+            </p>
+            <p>
+                אם נכנסים דרך רשת חברתית הדף לא תמיד נפתח בדפדפן ולא תהיה האפשרות הזו.
+                במקרה זה יש להיכנס לתפריט
+                <span class="verbatim">&nbsp;⋮&nbsp;</span>
+                ולבחור לעבור לדפדפן. משם ניתן יהיה להוסיף את
+                <b>מדויקת</b>
+                למסך הבית.
+            </p>
+        </div>
+        <div id="success-screen" class="hidden">
+            <div class="close-button">⨉</div>
+            <h1 id="success-header"></h1>
+            <div id="spoiler">המילה ה<b>מדויקת</b> היתה <span id="spoiler-word"></span></div>
+            <div id="statistics">
+                <p>הישגים לאורך הזמן:</p>
+                <div id="stats-row">
+                    <div><span id="stats-games"></span><span>משחקים</span></div>
+                    <div><span id="stats-success"></span><span>% הצלחה</span></div>
+                    <div><span id="stats-streak"></span><span>רצף<br />נוכחי</span></div>
+                    <div><span id="stats-max-streak"></span><span>רצף ארוך<br />ביותר</span></div>
+                </div>
+            </div>
+            <p>שתפו את התוצאה:</p>
+            <span id="share-button" match="exact">
+                <div id="result"></div>
+                <div id="share-button-text">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"
+                            fill="white" />
+                    </svg>
+                    <span>שיתוף</span>
+                </div>
+            </span>
+            <div id="countdown-container">
+                <div>המילה הבאה בעוד</div>
+                <div id="countdown"></div>
+            </div>
+        </div>
+    </div>
+    <div id="popup" class="hidden"></div>
+</body>
+
+</html>
