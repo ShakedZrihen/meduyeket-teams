@@ -20,4 +20,4 @@ automations:
           labels: ['small']
       - action: merge@v1
         args:
-          require_all_checks: true
+          wait_for_all_checks: true
