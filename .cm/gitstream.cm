@@ -18,6 +18,7 @@ automations:
       - action : add-labels@v1
         args:
           labels: ['small']
+      - action: approve@v1 
       - action: merge@v1
         args:
           wait_for_all_checks: true
