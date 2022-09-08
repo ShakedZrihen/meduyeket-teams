@@ -2,21 +2,28 @@ manifest:
   version: 1.0
 
 checks:
-  content:
-    is:
-      docs_only: {{ files | allExtensions(['md', 'txt', 'rst']) }}
-      tests_only: {{ files | allTests }}
+  pr:
+    is: 
+      release_bot: {{ branch.name | includes(['pr-bot-v']) }}
+  files:
+    are:
+      only_config: {{ files | allExtensions(['yml', 'yaml', 'json'])}}
   size:
     is:
-      small: {{ branch.diff.size < 20 }}
+      xsmall: {{ branch.diff.size <= 5 }}
+      small: {{ branch.diff.size > 5 and branch.diff.size <= 20 }}
+      medium: {{ branch.diff.size > 20 and branch.diff.size <= 100 }}
+      large: {{ branch.diff.size > 100 and branch.diff.size <= 200 }}
+      xlarge: {{ branch.diff.size > 200 }}
 
 automations:
-  small_pr:
+  merge_bot_release:
     if:
-      - {{ checks.size.is.small }}
+      - {{ checks.pr.is.release_bot }}
+      - {{ checks.files.are.only_config }}
     run: 
+      - action : approve@v1
+      - action : merge@v1
       - action : add-labels@v1
         args:
-          labels: ['small']
-      - action: approve@v1 
-      - action: merge@v1
+          labels: ['bot-release']
